@@ -8,7 +8,7 @@ def to_radians(
         arcsecs: typing.Optional[float] = 0.0,
         ) -> float:
     '''Convert degrees, arcminutes, and arcsedons to radians'''
-    print("hola")
+    
     degs_to_radians = degs * (2*math.pi) / 360
     arcmins_to_radians = ( arcmins / 60 ) * (2*math.pi) / 360
     arcsecs_to_radians = ( arcsecs / 3600 ) * (2*math.pi) / 360
