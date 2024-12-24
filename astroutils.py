@@ -1,6 +1,9 @@
 import math
 import typing
 
+def to_sf(sf: int, res: float) -> str:
+    return f"%.{sf}f" % res
+
 def to_radians(
         sf: int,
         degs: typing.Optional[float] = 0.0, 
@@ -15,5 +18,4 @@ def to_radians(
 
     res = degs_to_radians + arcmins_to_radians + arcsecs_to_radians
 
-    return f"%.{sf}f" % res
-    
+    return to_sf(sf=sf, res=res)
