@@ -38,3 +38,16 @@ def from_radians(
         to_sf(sf=sf, res=arcmins), 
         to_sf(sf=sf, res=arcsecs)
     )
+
+
+def ra_from_time_to_degs(
+        sf: float, 
+        h: typing.Optional[float] = 0.0,
+        m: typing.Optional[float] = 0.0,
+        s: typing.Optional[float] = 0.0
+) -> str:
+    '''Convert right ascension coordinates 
+    in time to decimal degrees'''
+    total_h = h + (m/60) + (s/3600)
+
+    return to_sf(sf=sf, res=total_h*15)
