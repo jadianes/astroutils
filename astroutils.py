@@ -10,7 +10,7 @@ SEC_IN_A_MIN = 60
 SEC_IN_A_H = 3600
 DEC_IN_A_H = 15
 H_IN_A_CIRC = 24
-
+SEC_IN_A_YEAR = 3.154e7
 
 def to_sf(sf: int, res: float) -> str:
     return f"%.{sf}g" % res
@@ -79,8 +79,19 @@ def angular_to_linear(
         distance_away: float
 ) -> str:
     '''Convert angular distance or size to linear'''
-    
+
     res = math.sin(theta) * distance_away
 
     return to_sf(sf=sf, res=res)
 
+
+def magnitude_from_components(
+        sf = int, 
+        ra_comp = float,
+        dec_comp = float
+        ) -> str:
+    """Compute magnitude using Pythagoras"""
+    
+    res = math.sqrt(ra_comp**2 + dec_comp**2)
+
+    return to_sf(sf=sf, res=res)
