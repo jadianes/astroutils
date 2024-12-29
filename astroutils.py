@@ -13,8 +13,27 @@ H_IN_A_CIRC = 24
 SEC_IN_A_YEAR = 3.154e7
 
 def to_sf(sf: int, res: float) -> str:
+    """To N significan figures"""
     return f"%.{sf}g" % res
 
+
+def to_dp(dp: int, res: float) -> str:
+    """To N decimal places"""
+    return f"%.{dp}f" % res
+
+
+def format_result(
+        res: float,
+        sf: typing.Optional[int] = None,
+        dp: typing.Optional[int] = None,
+) -> str:
+    if dp is not None:
+        return to_dp(dp=dp, res=res)
+    elif sf is not None:
+        return to_sf(sf=sf, res=res)
+    else:
+        return f"{res}"
+    
 
 def pc_to_au(pc: float) -> float:
     """Convert parsecs to astronomical units"""
@@ -95,3 +114,17 @@ def magnitude_from_components(
     res = math.sqrt(ra_comp**2 + dec_comp**2)
 
     return to_sf(sf=sf, res=res)
+
+
+def apparent_to_absolute_magnitude(
+        apparent_magnitude: float,
+        distance_away_in_pc: float,
+        sf: typing.Optional[int] = None,
+        dp: typing.Optional[int] = None,
+) -> str:
+    """Compute absolute magnitude from apparent magnitude via distance"""
+    
+    res = apparent_magnitude - 5 * math.log10(distance_away_in_pc) + 5
+
+    return format_result(res=res, sf=sf, dp=dp)
+
