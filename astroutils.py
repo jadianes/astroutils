@@ -11,6 +11,7 @@ SEC_IN_A_H = 3600
 DEC_IN_A_H = 15
 H_IN_A_CIRC = 24
 SEC_IN_A_YEAR = 3.154e7
+RR_LYRAE_M = 0.75
 
 def to_sf(sf: int, res: float) -> str:
     """To N significan figures"""
@@ -175,3 +176,36 @@ def flux_ratio_from_apparent_magnitudes(
         sf=sf,
         dp=dp
     )
+
+
+def distance_from_parallax(
+        parallax_angle: float,
+        sf: typing.Optional[int] = None,
+        dp: typing.Optional[int] = None
+) -> str:
+    """Calculate distance in parsecs from parallax angle in arcseconds"""
+    res = 1.0 / parallax_angle
+    return format_result(res=res, sf=sf, dp=dp)
+
+
+def parallax_from_distance(
+        distance_away: float,
+        sf: typing.Optional[int] = None,
+        dp: typing.Optional[int] = None
+) -> str:
+    """Calculate parallax in arcseconds from distance in parsecs"""
+    res = 1.0 / distance_away
+    return format_result(res=res, sf=sf, dp=dp)
+
+
+def distance_from_rr_lyrae(
+        apparent_magnitude: float,
+        interstellar_extinction: typing.Optional[float] = 0.0,
+        sf: typing.Optional[int] = None,
+        dp: typing.Optional[int] = None
+) -> str:
+    """Calculate distance to an RR lyrae from its apparent magnitude"""
+    res = 10**(
+        (apparent_magnitude - RR_LYRAE_M + 5 - interstellar_extinction) / 5
+    )
+    return format_result(res=res, sf=sf, dp=dp)
