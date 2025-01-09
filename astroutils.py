@@ -12,6 +12,8 @@ DEC_IN_A_H = 15
 H_IN_A_CIRC = 24
 SEC_IN_A_YEAR = 3.154e7
 RR_LYRAE_M = 0.75
+SPEED_OF_LIGHT_KMS = 3.0e5
+HUBBLE_CONSTANT_KMS = 70
 
 def to_sf(sf: int, res: float) -> str:
     """To N significan figures"""
@@ -124,6 +126,20 @@ def apparent_to_absolute_magnitude(
     return format_result(res=res, sf=sf, dp=dp)
 
 
+def distance_from_magnitudes(
+        apparent_magnitude: float,
+        absolute_magnitude: float,
+        interstellar_extinction: typing.Optional[float] = 0.0,
+        sf: typing.Optional[int] = None,
+        dp: typing.Optional[int] = None,
+    ) -> str:
+    """Compute distance away from apparent and absolute magnitudes"""
+    res = 10**(
+        (apparent_magnitude - absolute_magnitude + 5 - interstellar_extinction) / 5
+    )
+    return format_result(res=res, sf=sf, dp=dp)
+
+
 def magnitude_difference_from_fluxlum_ratio(
         fluxlum_ratio: float,
         sf: typing.Optional[int] = None,
@@ -209,3 +225,49 @@ def distance_from_rr_lyrae(
         (apparent_magnitude - RR_LYRAE_M + 5 - interstellar_extinction) / 5
     )
     return format_result(res=res, sf=sf, dp=dp)
+
+
+def distance_from_cepheid(
+        apparent_magnitude: float,
+        period_days: float,
+        interstellar_extinction: typing.Optional[float] = 0.0,
+        sf: typing.Optional[int] = None,
+        dp: typing.Optional[int] = None
+) -> str:
+    """Calculate distance to a Cepheid variable from its apparent
+    magnitude and period"""
+    absolute_magnitude = float(format_result(
+        res=-2.43 * math.log10(period_days) - 1.62,
+        sf=sf,
+        dp=dp
+    ))
+    res = distance_from_magnitudes(
+        apparent_magnitude=apparent_magnitude,
+        absolute_magnitude=absolute_magnitude,
+        interstellar_extinction=interstellar_extinction,
+        sf=sf,
+        dp=dp
+    )
+    return format_result(res=float(res), sf=sf, dp=dp)
+
+
+def distance_from_redshift(
+        redshift: float,
+        sf: typing.Optional[int] = None,
+        dp: typing.Optional[int] = None
+) -> str:
+    """Calculate distance from redshift and speed of recession"""
+    speed_of_recession = float(format_result(
+        res=redshift * SPEED_OF_LIGHT_KMS,
+        sf=sf,
+        dp=dp
+    ))
+    distance_away = float(format_result(
+        res=speed_of_recession / HUBBLE_CONSTANT_KMS,
+        sf=sf,
+        dp=dp
+    ))
+    return (
+        format_result(res=speed_of_recession, sf=sf, dp=dp),
+        format_result(res=distance_away, sf=sf, dp=dp)
+    )
