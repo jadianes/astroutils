@@ -14,6 +14,9 @@ SEC_IN_A_YEAR = 3.154e7
 RR_LYRAE_M = 0.75
 SPEED_OF_LIGHT_KMS = 3.0e5
 HUBBLE_CONSTANT_KMS = 70
+PLANCK_H = 6.63e-34
+J_IN_A_eV = 1.602e-19
+ 
 
 def to_sf(sf: int, res: float) -> str:
     """To N significan figures"""
@@ -271,3 +274,55 @@ def distance_from_redshift(
         format_result(res=speed_of_recession, sf=sf, dp=dp),
         format_result(res=distance_away, sf=sf, dp=dp)
     )
+
+
+def energy_from_wavelength(
+        wavelength: float,
+        sf: typing.Optional[int] = None,
+        dp: typing.Optional[int] = None
+) -> str:
+    """Calculate a photon's energy in eV from its wavelength in meters"""
+    res = PLANCK_H * SPEED_OF_LIGHT_KMS*1e3 / wavelength
+    return format_result(res=res, sf=sf, dp=dp)
+
+
+def wiens_law(
+        input: float,
+        sf: typing.Optional[int] = None,
+        dp: typing.Optional[int] = None
+) -> str:
+    """Use Wien's law to compute Temeprature or peak Wavelength"""
+    res = 2.9e-3/input
+    return format_result(res=res, sf=sf, dp=dp)
+
+
+def radius_from_lt_relationship(
+        luminosity: float,
+        temperature: float,
+        sf: typing.Optional[int] = None,
+        dp: typing.Optional[int] = None
+) -> str:
+    """Use LTR relationship to determine radius, in Solar units"""
+    res = math.sqrt(luminosity) * (1/temperature)**2
+    return format_result(res=res, sf=sf, dp=dp)
+
+
+def luminosity_from_rt_relationship(
+        radius: float,
+        temperature: float,
+        sf: typing.Optional[int] = None,
+        dp: typing.Optional[int] = None
+) -> str:
+    """Use LTR relationship to determine luminosity, in Solar units"""
+    res = radius**2 * temperature**4
+    return format_result(res=res, sf=sf, dp=dp)
+
+def temperature_from_lr_relationship(
+        luminosity: float,
+        radius: float,
+        sf: typing.Optional[int] = None,
+        dp: typing.Optional[int] = None
+) -> str:
+    """Use LTR relationship to determine temperature, in Solar units"""
+    res = (luminosity*radius**2)**(1/4)
+    return format_result(res=res, sf=sf, dp=dp)
