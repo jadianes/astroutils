@@ -326,3 +326,48 @@ def temperature_from_lr_relationship(
     """Use LTR relationship to determine temperature, in Solar units"""
     res = (luminosity*radius**2)**(1/4)
     return format_result(res=res, sf=sf, dp=dp)
+
+
+def hydrogen_transition_wavelength(
+        final_state: int,
+        initial_state: int,
+        sf: typing.Optional[int] = None,
+        dp: typing.Optional[int] = None
+) -> str:
+    """"""
+    initial_state_energy = float(format_result(
+        res=-13.6/(initial_state**2),
+        sf=sf,
+        dp=dp
+    ))
+    final_state_energy = float(format_result(
+        res=-13.6/(final_state**2),
+        sf=sf,
+        dp=dp
+    ))
+    res = ((PLANCK_H/J_IN_A_eV) * SPEED_OF_LIGHT_KMS * 1e3) \
+        / (final_state_energy - initial_state_energy)
+    return format_result(res=res, sf=sf, dp=dp)
+
+
+
+def radial_velocity_from_doppler_shift(
+        observed_wavelength: float,
+        emitted_wavelength: float,
+        sf: typing.Optional[int] = None,
+        dp: typing.Optional[int] = None
+) -> str:
+    """Compute radial velocity from doppler shift"""
+    res = (SPEED_OF_LIGHT_KMS*1e3)*(observed_wavelength-emitted_wavelength) \
+        / emitted_wavelength
+    return format_result(res=res, sf=sf, dp=dp)
+
+def doppler_shift_from_radial_velocity(
+        radial_velocity: float,
+        emitted_wavelength: float,
+        sf: typing.Optional[int] = None,
+        dp: typing.Optional[int] = None
+) -> str:
+    """Compute doppler shift from radial veolocity"""
+    res = radial_velocity*emitted_wavelength / (SPEED_OF_LIGHT_KMS*1e3)
+    return format_result(res=res, sf=sf, dp=dp)
