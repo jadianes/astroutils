@@ -16,7 +16,8 @@ SPEED_OF_LIGHT_KMS = 3.0e5
 HUBBLE_CONSTANT_KMS = 70
 PLANCK_H = 6.63e-34
 J_IN_A_eV = 1.602e-19
- 
+SOLAR_RADIUS_KM = 696340
+
 
 def to_sf(sf: int, res: float) -> str:
     """To N significan figures"""
@@ -41,17 +42,18 @@ def format_result(
         return f"{res}"
     
 
-def pc_to_au(pc: float) -> float:
+def pc_to_au(pc: float, sf: typing.Optional[int] = None, dp: typing.Optional[int] = None) -> str:
     """Convert parsecs to astronomical units"""
 
-    return ( pc * KM_IN_A_PC ) / KM_IN_AU
+    return format_result(res=( pc * KM_IN_A_PC ) / KM_IN_AU, sf=sf, dp=dp)
 
 
 def to_radians(
-        sf: int,
         degs: typing.Optional[float] = 0.0, 
         arcmins: typing.Optional[float] = 0.0, 
         arcsecs: typing.Optional[float] = 0.0,
+        sf: typing.Optional[int] = None,
+        dp: typing.Optional[int] = None
     ) -> str:
     '''Convert degrees, arcminutes, and arcsedons to radians'''
     
@@ -61,12 +63,13 @@ def to_radians(
 
     res = degs_to_radians + arcmins_to_radians + arcsecs_to_radians
 
-    return to_sf(sf=sf, res=res)
+    return format_result(res=res, sf=sf, dp=dp)
 
 
 def from_radians(
-        sf: int,
-        radians: float
+        radians: float,
+        sf: typing.Optional[int] = None,
+        dp: typing.Optional[int] = None
     ) -> str:
     '''Convert radians to degrees, arcminutes, and arcseconds'''
     
@@ -77,17 +80,18 @@ def from_radians(
     arcsecs = arcmins_f * SEC_IN_A_MIN
 
     return (
-        to_sf(sf=sf, res=degrees), 
-        to_sf(sf=sf, res=arcmins), 
-        to_sf(sf=sf, res=arcsecs)
+        format_result(res=degrees, sf=sf, dp=dp), 
+        format_result(res=arcmins, sf=sf, dp=dp), 
+        format_result(res=arcsecs, sf=sf, dp=dp)
     )
 
 
 def ra_from_time_to_deg(
-        sf: float, 
         h: typing.Optional[float] = 0.0,
         m: typing.Optional[float] = 0.0,
-        s: typing.Optional[float] = 0.0
+        s: typing.Optional[float] = 0.0,
+        sf: typing.Optional[int] = None,
+        dp: typing.Optional[int] = None 
     ) -> str:
     '''Convert right ascension coordinates 
     in time to decimal degrees'''
@@ -95,27 +99,29 @@ def ra_from_time_to_deg(
     total_h = h + ( m / MIN_IN_A_H ) + ( s / SEC_IN_A_H )
     total_deg = total_h * DEC_IN_A_H
 
-    return to_sf(sf=sf, res=total_deg)
+    return format_result(res=total_deg, sf=sf, dp=dp)
 
 
 def angular_to_linear(
-        sf: int,
-        theta: float,
-        distance_away: float
+        theta_radians: float,
+        distance_away_pc: float,
+        sf: typing.Optional[int] = None,
+        dp: typing.Optional[int] = None
     ) -> str:
     '''Convert angular distance or size to linear'''
-    res = math.sin(theta) * distance_away
-    return to_sf(sf=sf, res=res)
+    res = math.sin(theta_radians) * distance_away_pc
+    return format_result(res=res, sf=sf, dp=dp)
 
 
 def magnitude_from_components(
-        sf = int, 
         ra_comp = float,
-        dec_comp = float
+        dec_comp = float,
+        sf: typing.Optional[int] = None,
+        dp: typing.Optional[int] = None
     ) -> str:
     """Compute magnitude using Pythagoras"""
     res = math.sqrt(ra_comp**2 + dec_comp**2)
-    return to_sf(sf=sf, res=res)
+    return format_result(res=res, sf=sf, dp=dp)
 
 
 def apparent_to_absolute_magnitude(
@@ -198,12 +204,12 @@ def flux_ratio_from_apparent_magnitudes(
 
 
 def distance_from_parallax(
-        parallax_angle: float,
+        parallax_angle_arcsec: float,
         sf: typing.Optional[int] = None,
         dp: typing.Optional[int] = None
 ) -> str:
     """Calculate distance in parsecs from parallax angle in arcseconds"""
-    res = 1.0 / parallax_angle
+    res = 1.0 / parallax_angle_arcsec
     return format_result(res=res, sf=sf, dp=dp)
 
 
@@ -317,6 +323,7 @@ def luminosity_from_rt_relationship(
     res = radius**2 * temperature**4
     return format_result(res=res, sf=sf, dp=dp)
 
+
 def temperature_from_lr_relationship(
         luminosity: float,
         radius: float,
@@ -350,17 +357,17 @@ def hydrogen_transition_wavelength(
     return format_result(res=res, sf=sf, dp=dp)
 
 
-
 def radial_velocity_from_doppler_shift(
         observed_wavelength: float,
         emitted_wavelength: float,
         sf: typing.Optional[int] = None,
         dp: typing.Optional[int] = None
 ) -> str:
-    """Compute radial velocity from doppler shift"""
+    """Compute radial velocity from doppler shift, in meters per second"""
     res = (SPEED_OF_LIGHT_KMS*1e3)*(observed_wavelength-emitted_wavelength) \
         / emitted_wavelength
     return format_result(res=res, sf=sf, dp=dp)
+
 
 def doppler_shift_from_radial_velocity(
         radial_velocity: float,
