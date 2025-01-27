@@ -378,3 +378,14 @@ def doppler_shift_from_radial_velocity(
     """Compute doppler shift from radial veolocity"""
     res = radial_velocity*emitted_wavelength / (SPEED_OF_LIGHT_KMS*1e3)
     return format_result(res=res, sf=sf, dp=dp)
+
+
+def emc2(
+        mass: float, 
+        sf: typing.Optional[int] = None, 
+        dp: typing.Optional[int] = None
+        ) -> str:
+    """Compute energy from mass"""
+    res = mass*(SPEED_OF_LIGHT_KMS*1e3)**2
+    return format_result(res=res, sf=sf, dp=dp)
+
