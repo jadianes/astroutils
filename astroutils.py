@@ -13,11 +13,11 @@ H_IN_A_CIRC = 24
 SEC_IN_A_YEAR = 3.154e7
 RR_LYRAE_M = 0.75
 SPEED_OF_LIGHT_KMS = 3.0e5
-HUBBLE_CONSTANT_KMS = 70
+HUBBLE_CONSTANT_KMS_MPC = 70
 PLANCK_H = 6.63e-34
 J_IN_A_eV = 1.602e-19
 SOLAR_RADIUS_KM = 696340
-
+LIGHT_YEARS_IN_A_PC = 3.26
 
 def to_sf(sf: int, res: float) -> str:
     """To N significan figures"""
@@ -265,20 +265,37 @@ def distance_from_redshift(
         sf: typing.Optional[int] = None,
         dp: typing.Optional[int] = None
 ) -> str:
-    """Calculate distance from redshift and speed of recession"""
+    """Calculate distance (Mpc) from redshift and speed of recession (Kms)"""
     speed_of_recession = float(format_result(
         res=redshift * SPEED_OF_LIGHT_KMS,
         sf=sf,
         dp=dp
     ))
     distance_away = float(format_result(
-        res=speed_of_recession / HUBBLE_CONSTANT_KMS,
+        res=speed_of_recession / HUBBLE_CONSTANT_KMS_MPC,
         sf=sf,
         dp=dp
     ))
     return (
         format_result(res=speed_of_recession, sf=sf, dp=dp),
         format_result(res=distance_away, sf=sf, dp=dp)
+    )
+
+
+def light_travel_time_from_redshift(    
+    redshift: float,
+    sf: typing.Optional[int] = None,
+    dp: typing.Optional[int] = None
+) -> str:
+    """Calculate ligh time travel (years) from redshift"""
+    _, distance_away = distance_from_redshift(
+        redshift=redshift,
+        sf=sf,
+        dp=dp
+    )
+    light_travel_time = float(distance_away) * 1e6 * LIGHT_YEARS_IN_A_PC
+    return (
+        format_result(res=light_travel_time, sf=sf, dp=dp)
     )
 
 
